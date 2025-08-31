@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
@@ -20,6 +20,14 @@ export default function TodoApp() {
       setNewTodo("")
     }
   }
+
+  useEffect(() => {
+    async function main() {
+      const response = await fetch("/api/tasks/get?user=" + prompt("Enter your name:"));
+      setTodos(await response.json());
+    }
+    main();
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-blue-100">
