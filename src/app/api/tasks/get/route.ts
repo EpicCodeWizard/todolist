@@ -11,8 +11,8 @@ const taskList = {
     ]
 }
 
-export async function GET(request: Request) {
-    const { searchParams } = new URL(request.url);
+export async function POST(request: Request) {
+    const { user } = await request.json();
     // @ts-ignore
-    return Response.json(taskList[searchParams.get("user")]);
+    return Response.json(taskList[user]);
 }

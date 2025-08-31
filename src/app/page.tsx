@@ -13,6 +13,7 @@ interface Todo {
 export default function TodoApp() {
   const [todos, setTodos] = useState<Todo[]>([])
   const [newTodo, setNewTodo] = useState("")
+  const [newName, setNewName] = useState("")
 
   const addTodo = () => {
     if (newTodo.trim()) {
@@ -21,19 +22,31 @@ export default function TodoApp() {
     }
   }
 
-  useEffect(() => {
-    async function main() {
-      const response = await fetch("/api/tasks/get?user=" + prompt("Enter your name:"));
-      setTodos(await response.json());
-    }
-    main();
-  }, []);
+  const fetchData = async () => {
+    const response = await fetch("/api/tasks/get", {
+      method: "POST",
+      body: JSON.stringify({ user: newName.trim() }),
+    });
+    setTodos(await response.json());
+    setNewName("");
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-blue-100">
       <Card className="w-full max-w-md">
         <CardContent className="p-6">
           <h1 className="text-2xl font-bold text-center mb-6">Todo List</h1>
+
+          {/* Search by name */}
+          <div className="flex gap-2 mb-6">
+            <Input
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="Search by name..."
+              onKeyPress={(e) => e.key === "Enter" && fetchData()}
+            />
+            <Button onClick={fetchData}>Load Tasks</Button>
+          </div>
 
           {/* Add new todo */}
           <div className="flex gap-2 mb-6">
