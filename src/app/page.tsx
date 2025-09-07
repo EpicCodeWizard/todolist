@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
 
 interface Todo {
   id: number
@@ -14,11 +15,16 @@ export default function TodoApp() {
   const [todos, setTodos] = useState<Todo[]>([])
   const [newTodo, setNewTodo] = useState("")
   const [newName, setNewName] = useState("")
+  const [checked, setChecked] = useState<boolean | "indeterminate">(true)
 
-  const addTodo = () => {
+  const addTodo = async () => {
     if (newTodo.trim()) {
       setTodos([...todos, { id: Date.now(), text: newTodo.trim() }])
       setNewTodo("")
+      const response = await fetch("/api/tasks/update", {
+        method: "POST",
+        body: JSON.stringify({ user: newName.trim(), todos: [...todos, { id: Date.now(), text: newTodo.trim() }] }),
+      });
     }
   }
 
@@ -27,8 +33,11 @@ export default function TodoApp() {
       method: "POST",
       body: JSON.stringify({ user: newName.trim() }),
     });
-    setTodos(await response.json());
-    setNewName("");
+    try {
+      setTodos(await response.json());
+    } catch {
+      setTodos([]);
+    }
   };
 
   return (
@@ -58,6 +67,8 @@ export default function TodoApp() {
             />
             <Button onClick={addTodo}>Add</Button>
           </div>
+
+          <Checkbox checked={checked} onCheckedChange={(value) => setChecked(value)} />
 
           {/* Todo list */}
           <div className="space-y-2">
