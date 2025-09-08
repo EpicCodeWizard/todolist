@@ -1,4 +1,4 @@
-"use server";
+"use client";
 
 import { KindeProvider } from "@kinde-oss/kinde-auth-nextjs";
 

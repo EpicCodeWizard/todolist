@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 
+import { useKindeBrowserClient, LoginLink } from "@kinde-oss/kinde-auth-nextjs"
+
 interface Todo {
   id: number
   text: string
@@ -16,6 +18,8 @@ export default function TodoApp() {
   const [newTodo, setNewTodo] = useState("")
   const [newName, setNewName] = useState("")
   const [checked, setChecked] = useState<boolean | "indeterminate">(true)
+
+  const {isLoading, isAuthenticated, user} = useKindeBrowserClient();
 
   const addTodo = async () => {
     if (newTodo.trim()) {
@@ -40,11 +44,16 @@ export default function TodoApp() {
     }
   };
 
+  if (isLoading) return null;
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-blue-100">
       <Card className="w-full max-w-md">
         <CardContent className="p-6">
           <h1 className="text-2xl font-bold text-center mb-6">Todo List</h1>
+          {
+            isAuthenticated ? <p>{user?.given_name}</p> : <LoginLink>Sign in Here</LoginLink>
+          }
 
           {/* Search by name */}
           <div className="flex gap-2 mb-6">
