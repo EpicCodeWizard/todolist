@@ -1,12 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 
 import { useKindeBrowserClient, LoginLink } from "@kinde-oss/kinde-auth-nextjs"
+import { UserContext } from "@/lib/UserContext"
 
 interface Todo {
   id: number
@@ -18,6 +19,7 @@ export default function TodoApp() {
   const [newTodo, setNewTodo] = useState("")
   const [newName, setNewName] = useState("")
   const [checked, setChecked] = useState<boolean | "indeterminate">(true)
+  const { username } = useContext(UserContext)
 
   const {isLoading, isAuthenticated, user} = useKindeBrowserClient();
 
@@ -50,7 +52,7 @@ export default function TodoApp() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-blue-100">
       <Card className="w-full max-w-md">
         <CardContent className="p-6">
-          <h1 className="text-2xl font-bold text-center mb-6">Todo List</h1>
+          <h1 className="text-2xl font-bold text-center mb-6">Todo List for {username}</h1>
           {
             isAuthenticated ? <p>{user?.given_name}</p> : <LoginLink>Sign in Here</LoginLink>
           }
